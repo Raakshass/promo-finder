@@ -699,6 +699,7 @@ with tabs[6]:
             log_lines: list[str] = []
             try:
                 with st.status("Running…", expanded=True) as box:
+                    env["COLUMNS"] = "220"  # keep the CLI's messages on one line each
                     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=env, cwd=str(ROOT))
                     for line in proc.stdout:  # type: ignore[union-attr]
                         line = line.rstrip()
@@ -711,7 +712,7 @@ with tabs[6]:
                 lock.unlink(missing_ok=True)
             st.cache_data.clear()
             new = sorted((p for p in OUT.glob("*/*-upload") if (p / "promos.json").exists()), key=lambda p: p.stat().st_mtime)
-            joined = "\n".join(log_lines)
+            joined = " ".join("\n".join(log_lines).split())  # the CLI wraps long lines; match on flattened text
             if proc.returncode == 0 and new:
                 st.session_state["picked_run"] = str(new[-1])
                 st.rerun()
