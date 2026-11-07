@@ -435,7 +435,8 @@ if data:
     _ab = data.get("ab") or {}
     _tiles = [
         (f"{len(data['promos'])}", f"ranked promos from {_m.get('episodes', '?')} episodes"),
-        (f"{_er.get('top10_all_checks_pass', '–')}/10", "top 10 passing every editor's check"),
+        (f"{_er.get('top10_all_checks_pass', '–')}/{min(10, len(data['promos']))}",
+         f"top {min(10, len(data['promos']))} passing every editor's check"),
         (f"{_cv.get('mean_comprehensibility') or '–'}/5", "a first-time viewer follows the clip"),
         (f"{_ab['b_wins']}–{_ab['a_wins']}" if _ab else f"{_m.get('invariants', {}).get('pass_rate', 0):.0%}",
          f"blind A/B wins, new vs first version ({_ab.get('ties', 0)} ties)" if _ab else "clips that follow every rule"),
