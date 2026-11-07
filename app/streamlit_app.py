@@ -635,6 +635,9 @@ with tabs[6]:
             st.caption(f"`{demo_model}`: NVIDIA Nemotron 3.5 Super, an open-weights model served free by OpenRouter. That free tier allows "
                        f"about 50 calls a day per key, so a free run covers the first {demo_cap} episodes (the opening of a show, where professional "
                        f"editors take most ad footage from). When the day's quota is used up the run stops and says so.")
+        st.warning("Free tiers log what you send them (NVIDIA's free trial API says so explicitly, and some free OpenRouter "
+                   "providers do too). Don't upload confidential scripts here: use your own key or endpoint for those.",
+                   icon=":material/privacy_tip:")
         limit = st.number_input("episodes to process (0 = all)", 0, 500, demo_cap)
         for k in server_keys:
             env[k] = _secret(k) or ""

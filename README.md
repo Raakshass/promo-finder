@@ -196,6 +196,8 @@ uv run promo-finder ab <old_run> <new_run> --model …       # blind A/B, both o
 
 ## Limits
 
+- **Data and free tiers.** Free tiers log what you send them: NVIDIA's free API is a trial service that records requests to improve its products, and some free OpenRouter providers do the same. The official run sent the confidential pack to a free model API. That is processing, not publishing, but for confidential scripts in production, use a paid endpoint with a no-logging policy, or your own endpoint (`custom/<model>`).
+
 - It reads text only, so acting and camera work are invisible.
 - The first-time viewer is a model reading a transcript, not a person watching.
 - Script timing is assumed to match the final cut. Every clip is rendered by `cut_promos.sh` for a human check.
