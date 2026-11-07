@@ -1,0 +1,58 @@
+EPISODE NUMBER: Episode 2
+EPISODE LOGLINE: A scarred stranger kneels and proposes.
+CONTINUITY NOTES: Continues straight from the end of Episode 1, where Mara vowed to marry the first man who asks.
+
+--- SCRIPT START ---
+
+SCENE 01
+SCENE HEADING: INT. CHAPEL - CONTINUOUS
+SCENE START: 00:00.00
+SCENE END: 00:35.00
+
+Actions and dialogue:
+
+**CAMERA:**
+Start: (00:00.00) | End: (00:04.00)
+A stranger steps from the shadows.
+
+**STRANGER (Quiet, Steady):**
+Start: (00:00.50) | End: (00:03.00)
+"I ask."
+
+**ACTION:**
+Start: (00:04.00) | End: (00:07.00)
+The stranger drops to one knee and holds out a ring.
+
+**CAMERA:**
+Start: (00:07.00) | End: (00:15.00)
+Gasps ripple across the congregation.
+
+**TOM (Mocking):**
+Start: (00:07.50) | End: (00:10.00)
+"A beggar's ring for a bride nobody wanted."
+
+**MARA (Defiant):**
+Start: (00:10.50) | End: (00:14.00)
+"Better a nobody who asks than a lord who lies."
+
+**CAMERA:**
+Start: (00:15.00) | End: (00:25.00)
+Close on the ring.
+
+**STRANGER (Solemn):**
+Start: (00:16.00) | End: (00:19.00)
+"Lady Mara, accept my hand."
+
+**MARA (Shocked, Breathless):**
+Start: (00:20.00) | End: (00:24.00)
+"Who are you? Why would you hang for a stranger?"
+
+**CAMERA:**
+Start: (00:25.00) | End: (00:35.00)
+Hold on Mara's face as she reaches for the ring. Freeze frame.
+
+**MARA (Whispering):**
+Start: (00:26.00) | End: (00:28.00)
+"Yes."
+
+--- SCRIPT END ---

@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1030 318" font-family="Avenir Next, Inter, Helvetica Neue, Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker>
+  </defs>
+
+  <!-- lanes -->
+  <rect x="0" y="44" width="1030" height="112" rx="14" fill="#faf5ff"/>
+  <rect x="0" y="184" width="1030" height="112" rx="14" fill="#f4f7ff"/>
+  <text x="14" y="94" font-size="17" font-weight="800" fill="#6b21a8">AI</text>
+  <text x="14" y="113" font-size="11.5" fill="#6b21a8">judges</text>
+  <text x="14" y="128" font-size="11.5" fill="#6b21a8">drama</text>
+  <text x="14" y="234" font-size="17" font-weight="800" fill="#1e40af">Code</text>
+  <text x="14" y="253" font-size="11.5" fill="#1e40af">owns time</text>
+  <text x="14" y="268" font-size="11.5" fill="#1e40af">and rules</text>
+
+  <!-- code lane boxes -->
+  <g font-size="12.5" text-anchor="middle">
+    <rect x="96" y="200" width="160" height="80" rx="11" fill="#e0e7ff" stroke="#3b5bdb" stroke-width="1.6"/>
+    <text x="176" y="224" font-size="14.5" font-weight="700" fill="#1e3a8a">1 · Read</text>
+    <text x="176" y="245" fill="#1e3a8a">every line, action and</text>
+    <text x="176" y="262" fill="#1e3a8a">camera cut, with its time</text>
+
+    <rect x="356" y="200" width="160" height="80" rx="11" fill="#e0e7ff" stroke="#3b5bdb" stroke-width="1.6"/>
+    <text x="436" y="224" font-size="14.5" font-weight="700" fill="#1e3a8a">3 · Cut clips</text>
+    <text x="436" y="245" fill="#1e3a8a">20-60 s, start on a cut,</text>
+    <text x="436" y="262" fill="#1e3a8a">hook inside 3 seconds</text>
+
+    <rect x="616" y="200" width="160" height="80" rx="11" fill="#e0e7ff" stroke="#3b5bdb" stroke-width="1.6"/>
+    <text x="696" y="222" font-size="14.5" font-weight="700" fill="#1e3a8a">5 · Build the slate</text>
+    <text x="696" y="241" fill="#1e3a8a">the shape of pro ads:</text>
+    <rect x="626" y="252" width="77" height="14" rx="3" fill="#3b5bdb"/>
+    <rect x="703" y="252" width="46" height="14" fill="#7c93e6"/>
+    <rect x="749" y="252" width="17" height="14" rx="3" fill="#b9c6f2"/>
+    <text x="664" y="263" font-size="10" font-weight="700" fill="#ffffff">55% opening</text>
+    <text x="726" y="263" font-size="10" font-weight="700" fill="#ffffff">33%</text>
+    <text x="757" y="263" font-size="9" font-weight="700" fill="#1e3a8a">12</text>
+
+    <!-- editor -->
+    <rect x="866" y="200" width="156" height="80" rx="11" fill="#dcfce7" stroke="#2f9e44" stroke-width="1.6"/>
+    <text x="944" y="224" font-size="14.5" font-weight="700" fill="#14532d">Editor decides</text>
+    <text x="944" y="245" fill="#14532d">approve, trim, export</text>
+    <text x="944" y="262" fill="#14532d">CSV · ffmpeg cut script</text>
+  </g>
+
+  <!-- AI lane boxes -->
+  <g font-size="12.5" text-anchor="middle">
+    <rect x="226" y="60" width="160" height="80" rx="11" fill="#f3e8ff" stroke="#7e22ce" stroke-width="1.6"/>
+    <text x="306" y="84" font-size="14.5" font-weight="700" fill="#4c1d95">2 · Score every line</text>
+    <text x="306" y="105" fill="#4c1d95">would it hook? leave you</text>
+    <text x="306" y="122" fill="#4c1d95">hanging? + the show's arc</text>
+
+    <rect x="486" y="60" width="160" height="80" rx="11" fill="#f3e8ff" stroke="#7e22ce" stroke-width="1.6"/>
+    <text x="566" y="84" font-size="14.5" font-weight="700" fill="#4c1d95">4 · Check it</text>
+    <text x="566" y="105" fill="#4c1d95">9 editor's rules + a viewer</text>
+    <text x="566" y="122" fill="#4c1d95">who never saw the show</text>
+
+    <rect x="746" y="60" width="160" height="80" rx="11" fill="#f3e8ff" stroke="#7e22ce" stroke-width="1.6"/>
+    <text x="826" y="84" font-size="14.5" font-weight="700" fill="#4c1d95">6 · Promise &amp; payoff</text>
+    <text x="826" y="105" fill="#4c1d95">the question it plants,</text>
+    <text x="826" y="122" fill="#4c1d95">and where it's answered</text>
+  </g>
+
+  <!-- zigzag arrows in the overlaps -->
+  <g stroke="#334155" stroke-width="1.9" fill="none" marker-end="url(#a)">
+    <line x1="241" y1="199" x2="241" y2="143"/>
+    <line x1="371" y1="141" x2="371" y2="197"/>
+    <line x1="501" y1="199" x2="501" y2="143"/>
+    <line x1="631" y1="141" x2="631" y2="197"/>
+    <line x1="761" y1="199" x2="761" y2="143"/>
+    <line x1="891" y1="141" x2="891" y2="197"/>
+  </g>
+
+  <text x="515" y="24" text-anchor="middle" font-size="13.5" fill="#334155">The AI never writes a timestamp: it scores lines by id, and every cut comes from the script's own timing.</text>
+  <text x="515" y="313" text-anchor="middle" font-size="11.5" fill="#64748b">No API key? A keyword-based twin runs the same pipeline instantly.</text>
+</svg>

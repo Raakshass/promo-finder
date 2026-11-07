@@ -1,0 +1,38 @@
+[project]
+name = "promo-finder"
+version = "0.1.0"
+description = "Finds and ranks 20-60s promo clips in timestamped microdrama screenplays. Code owns time; the LLM owns taste."
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2.7",
+  "typer>=0.12",
+  "rich>=13.7",
+  "openai>=1.40",
+  "anthropic>=0.40",
+  "pyyaml>=6.0",
+  "python-dotenv>=1.0",
+  "streamlit>=1.36",
+  "plotly>=5.22",
+  "pandas>=2.2",
+]
+
+[project.scripts]
+promo-finder = "promo_finder.cli:app"
+
+[project.optional-dependencies]
+dev = ["pytest>=8.2"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["promo_finder"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "markdown>=3.11.2",
+]

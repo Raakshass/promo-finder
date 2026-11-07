@@ -1,0 +1,32 @@
+# Kuku's input pack is confidential: never commit scripts or the brief
+/data/
+*.zip
+*.pdf
+# secrets
+.env
+# LLM prompt cache contains script text
+.cache/
+# python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+dist/
+# streamlit
+.streamlit/secrets.toml
+
+# raw outputs quote the show; delivered to reviewers via a private link, never via this public repo
+outputs/
+
+# packaged submission (copies of outputs + zip) — shared via link, not the repo
+submission/
+
+# generated docs that quote the show go to reviewers via the submission link, not the public repo
+docs/solution.filled.md
+docs/solution.pdf
+docs/solution.html
+docs/human_review.md
+HANDOFF.md
+docs/interview_notes.md
+docs/video_script.md
+scripts/_build_filled.py

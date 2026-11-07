@@ -1,0 +1,20 @@
+# Assumptions: what we assumed, how it was tested, what to change if it is wrong
+
+Numbers come from `scripts/assumption_checks.py` on the official run, from `scripts/benchmark_dramaad.py` on 501 professional ads, and from `promo-finder stability`. "Untested" means it is untested, and is said so.
+
+| # | Assumption | Evidence | Result | If it is wrong |
+|---|---|---|---|---|
+| 1 | Script timestamps are the edit's timestamps. | Internal consistency: 3,727 of 3,727 timed blocks parse; episodes run 70-201 s, typical of 1-3 minute micro-drama episodes. | **Untestable from text.** Every clip is rendered by `cut_promos.sh` for a human check. | Re-time with a free speech aligner (WhisperX) before cutting. |
+| 2 | CAMERA blocks are shot boundaries, so starting on one starts on a cut. | 1,754 CAMERA blocks, median shot 3.0 s. | Most promo segments start exactly on a CAMERA block; all start on a timed block. | `promo.cut_snap_s` |
+| 3 | The hook must land in the first 3 s (the brief). | Meta/Nielsen: up to 47% of an ad's value lands in 3 s. | 100% of clips; the hook lands at a median of +0.2 s. | `promo.hook_window_s` |
+| 4 | A promo is 20-60 s (the brief). | Professional micro-drama ads run longer (DramaAD median about 3 min), but the brief sets 20-60 s. | 100% of clips are within 20-60 s; 25-45 s is preferred. | `promo.*_duration_s` |
+| 5 | Promos should come mostly from the opening of the show. | DramaAD, 501 professional ads: 55% of footage from the first 20% of episodes, 33% from 20-50%, 13% from the second half. | The slate copies that shape and posts the opening first. | `slate.shares`, `slate.opening_end`, `--paywall N` |
+| 6 | Episodes continue straight into each other, so an end-of-episode + start-of-next join is one moment. | The writers' continuity notes. | 44 of 50 notes say the next episode picks up directly. Joins are only built between consecutive episodes. | `candidates.boundary_span_s = 0` disables joins |
+| 7 | Stage directions ("cliffhanger", "cut to black") are not what the model keys on. | Cue-blind ablation: the same pack with those words hidden. | Known-cliff recall 76% blind vs 74% with them. | `scoring.writer_cue_bonus` |
+| 8 | A clip that answers its own question is not a promo. | Literature: suspense is withheld outcome (Brewer & Lichtenstein; Wilmot & Keller). A controlled test sends failing and passing clips to the blind judge (`scripts/check_experiment.py`). | See `eval/check_experiment.json`. | `rubric.penalties.ends_open` (x0.75) |
+| 9 | A stranger can follow at most 3 speakers; the opening must not lean on backstory. | Netflix artwork research; Loewenstein. On our own 28 judged clips, the few failing clips were rated slightly *higher*. | **Not confirmed by our data** (4 and 8 failing clips). The penalty is kept small (x0.9) as a literature prior. | `rubric.penalties.small_cast`, `context_free_open` |
+| 10 | A declaration of love is a resolution, not a cliffhanger. | The brief defines a cliffhanger as an unresolved moment; the model rated tender declarations 3/3 in v1. | Romance beats cap at 2/3 unless interrupted or left as a question; the model's own score is kept in `beats/`. | `rank.py` romance cap |
+| 11 | The free model's answers can be trusted as they come. | Validation of every answer. | **False.** 14 of 50 episodes came back flat in batches. Re-asking each alone fixed 11; 3 were confirmed as quiet. | `--batch 1`, `--votes 2` |
+| 12 | One run is enough. | Stability simulated from measured noise. | Two runs share about 40% of the top 10; two averaged readings raise that to 52%. | `--votes 2` |
+| 13 | Text is enough to judge a promo. | No video in the pack. | **Untestable here.** Acting, faces and shot quality are invisible. | A video model (paid upgrade) |
+| 14 | A first-time viewer can be simulated by a model reading the transcript. | A blind judge that sees only the clip's lines and actions. | It reads, it does not watch; it is the same model family as the scorer. | A judge from another model family; real hook and hold rates |

@@ -1,0 +1,86 @@
+EPISODE NUMBER: Episode 1
+EPISODE LOGLINE: Mara is left at the altar when Tom reveals he is marrying her sister.
+CONTINUITY NOTES: First episode.
+
+--- SCRIPT START ---
+
+SCENE 01
+Scene heading: INT. CHAPEL – DAY
+Scene start: 00:00.00
+Scene end: 00:40.00
+
+Actions and dialogue:
+
+**CAMERA:**
+Start: (00:00.00) | End: (00:03.00)
+Wide shot of the chapel doors opening.
+
+**MARA (Hopeful):**
+Start: (00:01.00) | End: (00:02.50)
+"Tom?"
+
+**CAMERA:**
+Start: (00:03.00) | End: (00:08.00)
+Close-up on Tom holding Lena's hand.
+
+**TOM (Cold):**
+Start: (00:03.50) | End: (00:06.00)
+"I am marrying your sister."
+
+**ACTION:**
+Start: (00:06.00) | End: (00:08.00)
+Lena slaps Mara across the face.
+
+**CAMERA:**
+Start: (00:08.00) | End: (00:14.00)
+Mara staggers back, stunned.
+
+**MARA (Furious):**
+Start: (00:08.50) | End: (00:11.00)
+"You knew all along, and you let me walk in!"
+
+**LENA (O.S.) (Gloating):**
+Start: (00:11.20) | End: (00:13.50)
+"I always knew, sister."
+
+**CAMERA:**
+Start: (00:14.00) | End: (00:22.00)
+Two-shot of the sisters.
+
+**MARA (Trembling):**
+Start: (00:14.50) | End: (00:17.00)
+"How long?"
+
+**LENA (Cruel, Poised):**
+Start: (00:17.50) | End: (00:21.00)
+"Since the spring. He only ever wanted the dowry."
+
+**MUSIC:**
+Start: (00:21.00) | End: (00:23.00)
+Low string drone.
+
+**CAMERA:**
+Start: (00:22.00) | End: (00:30.00)
+Mara turns to her father in the pews.
+
+**MARA (Begging):**
+Start: (00:23.00) | End: (00:26.00)
+"Father, say something. Anything."
+
+**FATHER (V.O. / Continues):**
+Start: (00:26.50) | End: (00:29.00)
+"You have shamed this house for the last time."
+
+**CAMERA:**
+Start: (00:30.00) | End: (00:40.00)
+Push-in on Mara as her tears harden into resolve. Cut to black on the cliffhanger.
+
+**MARA (Resolute):**
+Start: (00:31.00) | End: (00:33.00)
+"Then I will marry the first man who asks."
+
+**SOUND FX:**
+Start: (00:38.50) | End: (00:40.30)
+Ominous sting swells to a cliffhanger peak.
+
+--- SCRIPT END ---

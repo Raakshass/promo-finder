@@ -1,0 +1,72 @@
+# All tunables in one place. Nothing show-specific lives here.
+promo:
+  min_duration_s: 20.0
+  max_duration_s: 60.0
+  preferred_min_s: 25.0
+  preferred_max_s: 45.0
+  hook_window_s: 3.0        # hook must start within this many seconds of the clip start
+  cut_snap_s: 1.5           # how far back we may snap to a camera cut before the hook
+  tail_pad_s: 1.5           # how far past the cliff line we may extend to the shot end
+  straddle_tolerance_s: 0.3 # a dialogue line may overhang a boundary by at most this much
+
+candidates:
+  hook_min_score: 2         # beats scored >= this are hook candidates (0-3 scale)
+  cliff_min_score: 2
+  fallback_top_hooks: 5     # if too few hook candidates, take the top-N anyway
+  boundary_span_s: 45.0     # tail of ep N / head of ep N+1 considered for cross-episode promos
+  two_segment_enabled: true # hook shot + later run when the contiguous span would exceed 60s
+
+scoring:
+  w_hook: 0.35
+  w_cliff: 0.30
+  w_standalone: 0.25
+  w_density: 0.10
+  physical_hook_bonus: 0.5  # (on the 0-3 scale) if a physical ACTION/SFX lands in the first 3s
+  writer_cue_bonus: 0.5     # (on the 0-3 scale) if the writers' own cliffhanger cue is within 2s of the end
+  density_floor: 0.35       # dialogue-seconds / clip-seconds below this is penalised
+  nms_iou: 0.5
+  same_episode_penalty: 0.15
+  same_type_penalty: 0.10
+  max_per_episode_top10: 2
+  spoiler_last_fraction: 0.20  # promos from the last 20% of episodes get spoiler_risk=true
+
+rubric:                     # the editor's rubric (promo_finder/rubric.py, sources in docs/research.md)
+  enabled: true
+  max_speakers: 3           # Netflix: artwork with >3 people underperforms; working memory holds 3-5 chunks
+  max_gap_s: 4.0            # longest silence (no line, no action) a clip may contain
+  turning_point_bonus: 1.05 # clips from a turning-point episode (show-arc pass), except the climax
+  penalties:                # score multiplier when a check fails
+    opens_on_conflict: 0.85
+    context_free_open: 0.90
+    small_cast: 0.90
+    ends_open: 0.75         # a clip that spends its own payoff is not a promo
+    builds: 0.92
+    no_dead_air: 0.92
+    stakes_clear: 0.80
+    rootable: 0.92
+    features_lead: 0.90     # a promo sells the people the show is about
+
+slate:                      # where in the show promos come from (promo_finder/slate.py)
+  # Professional practice, measured on DramaAD (501 editor-cut ads from 28 short dramas): 55% of ad footage comes
+  # from the first 20% of episodes, 33% from 20-50%, 12% from the second half; 55% of ads open in the first 20%.
+  opening_end: 0.20         # opening block = first 20% of episodes (episodes 1-10 of 50; episodes 1-2 of 10)
+  middle_end: 0.50
+  shares: {opening: 0.55, middle: 0.33, late: 0.12}
+  paywall: null             # --paywall N: the opening block becomes the free episodes 1..N-1
+
+judge:
+  enabled: true
+  top_n: 40                 # finalists that get the cold-viewer test
+
+eval:
+  entailment: true          # continuity-note entailment check (one small call per episode pair)
+  cliff_window_s: 10.0      # "known cliff" = argmax cliff beat within the last N seconds
+
+llm:
+  rpm: 8                    # requests per minute throttle (free tiers: 5-15)
+  concurrency: 2
+  max_retries: 6
+  temperature: 0.0
+
+output:
+  final_top_n: 20
