@@ -123,7 +123,7 @@ A free OpenRouter key goes in `.env` (`OPENROUTER_API_KEY=…`; keys `…_KEY2/3
 
 ```bash
 uv run promo-finder check --model <provider/model>        # one tiny call proves the key and model work
-uv run promo-finder run <show> --model <provider/model> --fast            # uncapped API: estimated ~2 min for 50 episodes (not yet timed)
+uv run promo-finder run <show> --model <provider/model> --fast            # measured on NVIDIA's free API: 20 episodes in 2.4 min
 uv run promo-finder run <show> --model <provider/model> --fast --votes 2  # steadier ranking, 2x the calls
 ```
 
@@ -137,7 +137,7 @@ uv run promo-finder run <show> --model <provider/model> --fast --votes 2  # stea
 | local open models (Ollama) | `ollama/<model>` | none |
 | none | `none` | none |
 
-Measured: one episode is about 10 s of model time, and a full 50-episode show took 5–15 minutes on OpenRouter's free tier, held back by its request caps. `--fast` sends one episode per call, 8 at a time, judges only the final slate and skips the evaluation-only steps. On an uncapped API that should finish a show in about 2 minutes. That figure is an estimate from the per-call times, not a measured run.
+Measured: one episode is about 10 s of model time, and a full 50-episode show took 5–15 minutes on OpenRouter's free tier, held back by its request caps. `--fast` sends one episode per call, 8 at a time, judges only the final slate and skips the evaluation-only steps. On NVIDIA's free API (the same model, about 40 requests a minute) it scored **20 episodes in 2.4 minutes**: 33 calls, no errors, no rate-limit rejections, no keyword fallback. A 50-episode show should take about 6 minutes; that figure is extrapolated.
 
 **Local open models.** These are unlimited and private, but slow on a laptop:
 

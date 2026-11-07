@@ -53,7 +53,7 @@ DIAGRAM_HERE
 ## Scale, cost, models, deployment
 - **Cost and time.** {{CALLS}} calls per 50-episode show, **$0**: the official results come from a free open-weights model (NVIDIA Nemotron 3.5 Super, via OpenRouter's free tier).
     - Measured on that free tier: 7–17 minutes in our runs, held back by request caps. One episode is about 10 s of model time.
-    - On an uncapped API, `--fast` runs 8 episodes at a time. The estimate is about 2 minutes per show; this has not been timed.
+    - On NVIDIA's free API, `--fast` ran 20 episodes in 2.4 minutes (measured), so a full show should take about 6.
 - **Swapping the model.** One setting: `PROMO_MODEL=provider/model`, or `custom/<model>` for any OpenAI-compatible endpoint, such as Kuku's own.
     - A local Llama 3.1 8B matched 52% of the line scores on 3 episodes, at about 80 s per episode on a laptop.
 - **Free deployment.** The app runs on Streamlit Community Cloud and opens on the official results.
