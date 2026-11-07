@@ -57,7 +57,7 @@ DIAGRAM_HERE
 - **Swapping the model.** One setting: `PROMO_MODEL=provider/model`, or `custom/<model>` for any OpenAI-compatible endpoint, such as Kuku's own.
     - A local Llama 3.1 8B matched 52% of the line scores on 3 episodes, at about 80 s per episode on a laptop.
 - **Free deployment.** The app runs on Streamlit Community Cloud and opens on the official results.
-    - Re-runs on a new show use the same open model through NVIDIA's free API: no daily cap, about 40 requests a minute.
+    - Re-runs on a new show use the same open model, through NVIDIA's free API (no daily cap, about 40 requests a minute) when the deployment has its key, otherwise through OpenRouter's free tier (about 50 calls a day per key).
     - Visitors can also use their own key, or no key.
     - The model's weights are open, but at 120B parameters (75 GB in 4-bit) no free host can serve them; NVIDIA's free API already does.
 
