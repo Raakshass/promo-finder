@@ -621,7 +621,11 @@ with tabs[6]:
     demo_cap = int(_secret("DEMO_MAX_EPISODES") or (0 if nvidia_key else 15))
     modes = ["Free hosted open model (no key needed)", "My own key or endpoint", "No model (instant keyword twin)"]
     mode = st.radio("Model", modes, index=0 if server_keys else 2)
-    env = dict(os.environ)
+    import re
+
+    # The deployment's secrets also arrive as environment variables, so every run starts with none of their API keys
+    # or endpoints. The free mode adds back only its free key; a visitor's own-model run gets only the key they paste.
+    env = {k: v for k, v in os.environ.items() if not re.search(r"(_API_KEY\d*|_AUTH_TOKEN|_BASE_URL)$", k)}
     cmd_model, extra = "none", []
     if mode == modes[0]:
         if not server_keys:
@@ -660,8 +664,6 @@ with tabs[6]:
         var = {"gemini": "GEMINI_API_KEY", "groq": "GROQ_API_KEY", "anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY",
                "openrouter": "OPENROUTER_API_KEY", "aimlapi": "AIMLAPI_API_KEY", "custom": "PROMO_API_KEY",
                "nvidia": "NVIDIA_API_KEY", "mistral": "MISTRAL_API_KEY"}.get(prov)
-        for k in ("OPENROUTER_API_KEY", "OPENROUTER_API_KEY2", "OPENROUTER_API_KEY3", "NVIDIA_API_KEY"):
-            env.pop(k, None)  # never mix a visitor's run with this deployment's keys
         if var and key:
             env[var] = key
         if base:
