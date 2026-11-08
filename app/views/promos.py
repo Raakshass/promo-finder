@@ -139,7 +139,7 @@ def _part_clause(parts_: list) -> str:
 
 
 def _card_rank(parts_: list) -> tuple[str, str]:
-    tail = "# is the posting order, not a quality rank."
+    tail = "The number is the posting order, not a quality rank."
     if len(parts_) >= 2:
         first = parts_[0]
         return (f"Post {fmt.ep_range(first.first_ep, first.last_ep)} first",

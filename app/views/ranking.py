@@ -11,7 +11,7 @@ from app.ui.components import empty_state, open_button, view_header
 from app.ui.data import RunInfo
 
 TITLE = "Which to post first, and why"
-PURPOSE = "# is the posting order. Here is the rule, the show map it follows, and the reason for every position."
+PURPOSE = "Each promo's number (#1, #2, …) is its posting order. Here is the rule, the show map it follows, and the reason for every position."
 NOT_REPLAYABLE = ("This run was made by an earlier version that ordered promos differently, so the order can't be "
                   "explained here.")
 LIST_CAPTION = ("Score: 0 to 1, built from the hook, the cliffhanger, how well a stranger follows and pace, × a penalty "
