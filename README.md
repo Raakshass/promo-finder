@@ -5,7 +5,7 @@
 Give it a folder of timestamped screenplays. It hands an editor a ranked slate of 20–60 s promos: exact in and out points for every segment, the hook, the cliffhanger, why it works, which part of the show to take each one from, and the question each one leaves a stranger with, plus the episode where the show answers it. It then checks its own picks against nine editor's rules, a blind first-time viewer, the writers' own cliffhangers, and promos cut by professional editors on shows it has never seen.
 
 > Kuku AI Generalist Assignment, Problem 1 ("Find the Promos"). Siddhant Jain · 23113142.
-> Prototype: *(Streamlit link in the submission form)* · Colab: [`notebooks/promo_finder_colab.ipynb`](notebooks/promo_finder_colab.ipynb) · Solution doc: in the submission form
+> Live app: https://promo-finder-zaxgwfpxhwvcvubkjcgg3x.streamlit.app · Colab: [open the notebook](https://colab.research.google.com/github/Raakshass/promo-finder/blob/main/notebooks/promo_finder_colab.ipynb) · Solution doc and raw outputs: in the submission's Drive folder
 
 ## How it works
 
