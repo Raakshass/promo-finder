@@ -151,7 +151,22 @@ So the deployed app runs on Streamlit Community Cloud and calls a hosted model t
 | Random clips | 1.19 | 54% | 1.06 |
 | Opening seconds of each episode | 1.72 | 65% | 0.89 |
 
-The two dramas disagree (slate 2.0× on one, 0.75× on the other). Editors in DramaAD mostly reuse episode openings inside long (~3 min) multi-segment ads, so position predicts their footage better than moment-level taste does. This is the main open question; calibrating on all 28 dramas is the next step.
+The two dramas disagree (slate 2.0× on one, 0.75× on the other). Editors in DramaAD mostly reuse episode openings inside long (~3 min) multi-segment ads, so position predicts their footage better than moment-level taste does.
+
+**The same benchmark on 12 dramas** (8 Nov; NVIDIA's free API, `--fast`, one episode per call; 11 dramas have ads in the episodes tested; means over dramas with bootstrap 95% CIs):
+
+| Measure | Ours | Random | Difference (95% CI) |
+|---|---|---|---|
+| Slate, top 20: usage lift | 1.39 | 1.08 | +0.31 (+0.01 to +0.63) |
+| Slate, top 10: usage lift | 1.44 | 1.12 | +0.32 (−0.33 to +1.00) |
+| Raw best clips, lift within the same episode | 1.07 | 1.03 | +0.04 (0.00 to +0.09); 8 of 11 dramas up |
+| Episode openings, top 10: usage lift | 1.74 | | beats our slate by 0.29 (−0.82 to +0.25) |
+
+With 12 dramas the 2-drama result above does not hold up: inside an episode the best-scored clips do beat random spots, by a small margin. Episode openings still match these editors better in the top 10. Two uncached runs of 4 of the dramas shared 68% of their top-10 candidates and gave 88% of lines the same hook score.
+
+**Do the weights match what editors pick?** (`scripts/weights_vs_editors.py`, the 2 original dramas, no model calls.) A logistic fit of "an editor used this clip" on the four terms cannot reject the 0.35 / 0.30 / 0.25 / 0.10 proportions (likelihood ratio 5.91, df 3, p = 0.12). Weights tuned on one drama do not carry over to the other. Only *pace* shows a lead, and it does not hold inside episodes. Against 500 random weight vectors, the official weights sit mid-pack at top 10. So the priors stay, and `promo-finder learn` is the way to move them, from real traction.
+
+**How sensitive is the ranking to the weights?** (`scripts/weight_sensitivity.py`, the official run, no model calls.) The offline rebuild reproduces the official 20 exactly. Moving any one weight by 0.05 keeps 8.75 of the top 10 on average (9.25 if another cut of the same moment counts), and the opening / middle / late split never moves.
 
 **Blind A/B with a judge from another model family** (Llama-3.1-8B, local). The first version's top 10 against the slate's: first version 4, slate 1, 5 ties, with the judge position-consistent on half the pairs. The slate posts early-episode clips the way professional editors do, and those are less explosive in isolation. That is a real trade-off, and `slate.shares` is the knob.
 

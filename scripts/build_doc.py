@@ -15,24 +15,24 @@ PDF = ROOT / "docs" / "solution.pdf"
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 CSS = """
-@page { size: A4; margin: 9.5mm 12mm 9.5mm 12mm; }
+@page { size: A4; margin: 9mm 12mm 8.5mm 12mm; }
 html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-body { font-family: 'Avenir Next', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; font-size: 8.9pt; line-height: 1.29; color: #1f2328; }
-h1 { font-size: 21pt; font-weight: 700; letter-spacing: -0.3px; margin: 0; color: #111827; }
-.sub { font-size: 11pt; color: #374151; margin: 1px 0 2px; font-weight: 500; }
-.byline { font-size: 8.3pt; color: #6b7280; margin: 0 0 4px; }
-h2 { font-size: 11pt; font-weight: 700; color: #3b5bdb; margin: 7px 0 2px; padding-bottom: 2px; border-bottom: 1.5px solid #e5e7eb; }
+body { font-family: 'Avenir Next', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; font-size: 8.6pt; line-height: 1.3; color: #27272a; }
+h1 { font-size: 20pt; font-weight: 700; letter-spacing: -0.4px; margin: 0; color: #18181b; }
+.sub { font-size: 10.2pt; color: #3f3f46; margin: 2px 0 3px; font-weight: 500; line-height: 1.3; }
+.byline { font-size: 7.9pt; color: #71717a; margin: 0 0 5px; padding-bottom: 5px; border-bottom: 2px solid #18181b; }
+h2 { font-size: 10.4pt; font-weight: 700; color: #18181b; margin: 7px 0 3px; padding-left: 7px; border-left: 3px solid #4f46e5; line-height: 1.2; }
 p { margin: 3px 0; }
-ul { margin: 3px 0 3px 15px; padding: 0; } li { margin: 1.5px 0; }
-table { border-collapse: collapse; width: 100%; margin: 3px 0 2px; font-size: 8.1pt; }
-th, td { border: 1px solid #e5e7eb; padding: 2px 5px; vertical-align: top; text-align: left; }
-th { background: #f3f4f6; font-weight: 600; color: #111827; }
-tr:nth-child(even) td { background: #fafafa; }
+ul, ol { margin: 3px 0 3px 16px; padding: 0; } li { margin: 1.5px 0; }
+table { border-collapse: collapse; width: 100%; margin: 4px 0 3px; font-size: 7.9pt; }
+th, td { border-bottom: 1px solid #e4e4e7; padding: 2.2px 5px; vertical-align: top; text-align: left; }
+th { font-weight: 600; color: #18181b; border-bottom: 1.5px solid #a1a1aa; }
 tr { break-inside: avoid; page-break-inside: avoid; } h2 { break-after: avoid; page-break-after: avoid; }
-code { font-family: Menlo, monospace; font-size: 8pt; background: #f3f4f6; padding: 0 3px; border-radius: 3px; }
-strong { color: #111827; }
+code { font-family: Menlo, monospace; font-size: 7.7pt; background: #f4f4f5; padding: 0 3px; border-radius: 3px; color: #3f3f46; }
+strong { color: #18181b; }
+.formula { font-family: Menlo, monospace; font-size: 8pt; background: #eef2ff; border-left: 3px solid #4f46e5; padding: 5px 8px; margin: 4px 0 4px; border-radius: 0 4px 4px 0; color: #1e1b4b; }
 .diagram { margin: 4px 0 2px; } .diagram svg { width: 100%; height: auto; display: block; }
-a { color: #3b5bdb; text-decoration: none; }
+a { color: #4f46e5; text-decoration: none; }
 """
 
 

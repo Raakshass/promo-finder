@@ -156,6 +156,8 @@ def run(
         cfg["judge"]["top_n"] = judge_top_n or cfg["output"]["final_top_n"]
         cfg["judge"]["clips_per_call"] = cfg["judge"].get("clips_per_call", 5) if batch else 5
         cfg["eval"]["entailment"] = False
+        if not max_tokens:  # long episodes overflow 4,096 output tokens (3 of 240 benchmark episodes did)
+            cfg["llm"]["max_tokens"] = max(int(cfg["llm"].get("max_tokens") or 0), 8192)
     t_start = time.time()
     skipped: list[dict] = []
     try:
@@ -308,10 +310,14 @@ def run(
     (run_dir / "eval" / "promoability.md").write_text(promoability.markdown(promo_rep), encoding="utf-8")
     (run_dir / "promos_by_episode.csv").write_text(per_episode_csv(all_windows, ctx, source), encoding="utf-8")
     from .rank import nms as _nms
-    with open(run_dir / "candidates.jsonl", "w", encoding="utf-8") as fh:  # every de-duplicated candidate, best first (benchmarks)
+    with open(run_dir / "candidates.jsonl", "w", encoding="utf-8") as fh:  # every de-duplicated candidate, best first (benchmarks, learn)
         for w in sorted(_nms(all_windows, cfg), key=lambda x: -x.score)[:300]:
             fh.write(json.dumps({"cand_id": w.cand_id, "score": w.score, "block": w.flags.get("block"), "kind": w.kind,
-                                 "segments": [{"episode": g.episode, "start_s": round(g.start_s, 2), "end_s": round(g.end_s, 2)} for g in w.segments]}) + "\n")
+                                 "segments": [{"episode": g.episode, "start_s": round(g.start_s, 2), "end_s": round(g.end_s, 2)} for g in w.segments],
+                                 # the four terms and the multiplier's parts, so `promo-finder learn` can re-score any candidate
+                                 "subscores": {k: w.subscores[k] for k in ("hook", "cliff", "standalone", "density", "base", "rubric_mult", "arc_mult") if k in w.subscores},
+                                 "judged": "standalone_proxy" in w.subscores, "hook_beat": w.hook_beat, "cliff_beat": w.cliff_beat,
+                                 "hook_type": w.flags.get("hook_type"), "spoiler_risk": bool(w.flags.get("spoiler_risk"))}) + "\n")
     (run_dir / "eval" / "promise_ledger.json").write_text(json.dumps(ledger_rows, indent=1, ensure_ascii=False), encoding="utf-8")
 
     t = Table(title=f"Top promos → {run_dir}")
@@ -438,6 +444,83 @@ def stability(
 def compare(run_a: Path, run_b: Path):
     """Compare two runs (stability, cue-blind ablation, model swap): top-k overlap and metric deltas."""
     print(json.dumps(ev.compare_runs(run_a, run_b), indent=1))
+
+
+@app.command()
+def learn(
+    run: Path = typer.Argument(..., help="a finished run folder (promos.json, candidates.jsonl, config.yaml)"),
+    outcomes: Path = typer.Option(..., "--outcomes", help="CSV with one row per posted (or reviewed) promo: promo_id as in promos.csv "
+                                  "(or rank, or a cand_id) and a metric column; or the app's decisions.json"),
+    metric: str = typer.Option(None, "--metric", help="the outcome column (default: detected, e.g. hook_rate, hold_rate, ctr, approved)"),
+    kind: str = typer.Option("auto", "--kind", help="auto | continuous (hook rate, hold rate, CTR) | binary (approved/kept 0/1)"),
+    prior_strength: float = typer.Option(30.0, "--prior-strength", help="how many posts the current weights are worth (30: about 30 posts move them halfway; less for a noisy metric)"),
+    out: Path = typer.Option(None, "--out", help="write a config with the learned weights to this file (never over a config.yaml)"),
+    plan: int = typer.Option(0, "--plan", help="also pick the next K promos to post (Thompson sampling over the weights)"),
+    draws: int = typer.Option(1000, "--draws", help="posterior draws behind --plan"),
+    seed: int = typer.Option(7, "--seed", help="random seed of the draws"),
+    config: Path = typer.Option(ROOT / "config.yaml", "--config", help="the config whose other settings --out copies"),
+    show_dir: Path = typer.Option(None, "--show-dir", help="the show folder, if it moved (only older runs need it, to rebuild candidates' terms)"),
+    json_out: bool = typer.Option(False, "--json", help="print the result as JSON"),
+):
+    """Refit the four ranking weights from how posted promos performed (hook rate, hold rate, CTR, or approved/kept), with the
+    current weights as a prior worth --prior-strength posts. --plan K picks the next K promos by Thompson sampling. No model calls."""
+    from . import learn as lr
+    try:
+        if out:
+            lr.check_out_path(out, config)
+        pool = lr.load_pool(run, show_dir)
+        obs = lr.read_outcomes(outcomes, metric, kind)
+        joined = lr.join(obs, pool)
+        res = lr.fit(joined.Z, joined.y, pool.weights, obs.kind, prior_strength, pool.Z)
+        pl = lr.plan(res, pool, plan, joined.clips, draws, seed) if plan > 0 else None
+        written = None
+        if out:
+            written = lr.write_config(out, config, res, {"run": f"{run.parent.name}/{run.name}", "outcomes": outcomes.name,
+                                                         "metric": obs.metric, "unknown": len(joined.unknown)})
+    except lr.LearnError as e:
+        console.print(f"[red]{e}[/red]")
+        raise typer.Exit(1)
+    notes = pool.notes + obs.notes + ([f"{obs.skipped} rows had no {obs.metric} value and were skipped"] if obs.skipped else [])
+    if json_out:
+        print(json.dumps({"run": run.name, "metric": obs.metric, "id_column": obs.id_column, "rows": len(obs.ids), "unknown_ids": joined.unknown,
+                          "fit": res.as_dict(), "plan": pl, "written": str(out) if written else None, "notes": notes}, indent=1))
+        return
+    for n_ in notes:
+        console.print(f"[dim]{n_}[/dim]")
+    if joined.unknown:
+        console.print(f"[yellow]{len(joined.unknown)} id{'s are' if len(joined.unknown) != 1 else ' is'} not in this run and skipped: {', '.join(joined.unknown[:8])}"
+                      + (" ..." if len(joined.unknown) > 8 else "") + "[/yellow]")
+    console.print(f"[bold]Ranking weights learned from {obs.metric}[/bold] ({obs.kind}, {res.n} posts) · prior: the current weights, "
+                  f"worth {res.prior_strength:g} posts")
+    t = Table()
+    for col in ("term", "old", "new", "± sd", "change"):
+        t.add_column(col, justify="left" if col == "term" else "right")
+    for term, o, n_, s in zip(lr.TERMS, res.old, res.new, res.sd):
+        t.add_row(term, f"{o:.3f}", f"{n_:.3f}", f"{s:.3f}", f"{n_ - o:+.3f}")
+    console.print(t)
+    st = res.stats
+    fit_line = (f"old score vs {obs.metric}: r = {st.get('r_old_score')} · learned score: r = {st.get('r_new_score_in_sample')} (in-sample)"
+                if res.kind == "continuous" else
+                f"old score AUC {st.get('auc_old_score')} · learned score AUC {st.get('auc_new_score_in_sample')} (in-sample) · base rate {st.get('base_rate')}")
+    console.print(f"the posts carry {res.data_share:.0%} of the information (the prior the rest); {res.moved:.1%} of the weight moved between terms · {fit_line}")
+    for w_ in res.warnings:
+        console.print(f"[yellow]warning: {w_}[/yellow]")
+    console.print(f"[green]wrote {out}[/green] (use it with: promo-finder run <show> --config {out})" if written
+                  else "not written: pass --out <file.yaml> to save a config with these weights")
+    if pl is not None:
+        console.print(f"[bold]Next {plan} promos to post[/bold] · Thompson sampling: the slate under one posterior draw (seed {seed}); "
+                      f"'in slate' and 'top pick' are shares of {pl.get('valid_draws', 0)} draws")
+        pt = Table()
+        for col in ("#", "clip", "promo", "episode", "block", "score", "in slate", "top pick", "pick", "judged"):
+            pt.add_column(col, justify="right" if col in ("#", "score", "in slate", "top pick") else "left")
+        for r in pl["rows"]:
+            pt.add_row(str(r["slot"]), r["cand_id"], r["promo_id"] or "-", "+".join(map(str, r["episodes"])), r["block"] or "-",
+                       f"{r['score_new']:.3f}", f"{r['in_slate_share']:.0%}", f"{r['top_share']:.0%}", r["pick"], "yes" if r["judged"] else "no")
+        console.print(pt)
+        console.print(f"[dim]{pl['eligible']} of {pl['pool']} clips eligible ({pl['excluded_as_posted']} already posted or near-duplicates of a post). "
+                      f"Rules applied: {pl['rules']}. Out of scope: {pl['out_of_scope']}.[/dim]")
+        if pl.get("note"):
+            console.print(f"[yellow]{pl['note']}[/yellow]")
 
 
 if __name__ == "__main__":

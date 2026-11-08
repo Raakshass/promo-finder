@@ -33,13 +33,13 @@ Purple steps are the AI and blue steps are code. **The AI never writes a timesta
 The AI's only job is to score each line, by its id. Every number below lives in [`config.yaml`](config.yaml), and every intermediate value is written to `promos.json`, so any rank can be recomputed by hand.
 
 1. **Candidates** ([`candidates.py`](promo_finder/candidates.py)). Every pairing of a strong opening line with a later strong closing line becomes a clip.
-   - The clip starts on the camera cut before the opening line, which must land within 3 s, and ends after the closing line.
+   - The clip starts on a camera cut just before the opening line when there is one (otherwise on the line itself), so the opening line lands within 3 s, and it ends after the closing line.
    - It must run 20–60 s, and no line may be cut in half.
    - The end of one episode can join the start of the next.
 2. **Sub-scores, each 0–1** ([`rank.py`](promo_finder/rank.py) `score_window`):
    - *hook* is the AI's 0–3 score of the opening line, divided by 3. It gets +0.5 on the 0–3 scale if a physical action lands in the first 3 s.
-   - *cliff* is the AI's 0–3 score of the closing line, divided by 3. It gets +0.5 if the writers' own end-of-episode cue falls within 2 s. A declaration of love is capped at 2/3.
-   - *stands alone* is the share of lines without unexplained names or events. For the shortlist it is replaced by the first-time viewer's 1–5 rating, divided by 5.
+   - *cliff* is the AI's 0–3 score of the closing line, divided by 3. It gets +0.5 if a writers' cue ("cut to black", "freeze-frame") ends within 2 s of the clip's end. A declaration of love that is not cut off counts at most 2/3.
+   - *stands alone* is an estimate first: each spoken line earns 1 − (unexplained names or events, at most 4) / 4, averaged over the clip. For the 40-clip shortlist it is replaced by the first-time viewer's 1–5 rating, divided by 5.
    - *pace* is the share of the clip filled with dialogue, halved if below 35%, times a length factor: 1.0 for 25–45 s, falling to 0.6 at 20 s or 60 s.
 3. **Score** ([`rank.py`](promo_finder/rank.py) `combine`). The base is `0.35·hook + 0.30·cliff + 0.25·stands alone + 0.10·pace`. That base is then multiplied by:
    - a penalty for each failed editor's check ([`rubric.py`](promo_finder/rubric.py)): ×0.75 for spending the payoff, down to ×0.92 for the mildest;
@@ -60,7 +60,12 @@ The AI's only job is to score each line, by its id. Every number below lives in 
 - No check failed (×1.00), and it comes from a turning-point episode (×1.05), so the score is **0.884**.
 - It is the best clip in the opening part, so it is posted first. #2 scores 0.883 with no turning-point lift.
 
-**Honest caveat:** the weights and penalties are hand-set priors from the research, not learned from data. The editor's approve/reject log is there to refit them on real hook rate and hold rate.
+**Why these weights.** In a feed a promo has to win three things in order: the viewer stops, follows, then taps. *Hook* comes first because a viewer who does not stop never sees the rest. *Cliff* comes next because the brief defines a promo by its hook and its cliffhanger (the research does not rank it above *stands alone*). *Stands alone* is third, but four of the nine checks also test it. *Pace* is last because a script is a weak stand-in for the edit's rhythm. The numbers are hand-set priors, not fitted values.
+
+**How the weights were tested** (no model calls; `scripts/weight_sensitivity.py`, `scripts/weights_vs_editors.py`):
+- **Small changes barely matter.** Moving any one weight by 0.05 keeps 8.75 of the top 10 on average (9.25 if another cut of the same moment counts). The opening / middle / late split never moves.
+- **Professional editors do not contradict them.** On the two DramaAD dramas, fitting the four terms to the clips editors used cannot reject these proportions (likelihood ratio p = 0.12), and weights tuned on one drama do not carry over to the other. Only *pace* shows a lead, and it does not hold inside episodes.
+- **Real traction should set them**, which is what `promo-finder learn` is for (below).
 
 ## What makes a promo work (and how each rule is checked)
 
@@ -85,21 +90,22 @@ DramaAD covers [501 ads cut by professional editors from 28 short dramas](https:
 | | |
 |---|---|
 | Rules followed (20–60 s, hook ≤ 3 s, starts on a cut) | 100% of clips |
-| Slate shape (opening / middle / late) | 11 / 7 / 2 of 20, so the whole top 10 comes from the opening of the show |
-| A first-time viewer follows the clip | 3.65 / 5; 62% rate it 4 or 5; would tap 3.6 / 5 |
-| Promise & payoff | the show answers 19 of 20 promos' questions (11 later in the same episode, 8 in a later one, median 1.2 min after the clip); 0 fake hooks |
-| Consistency (simulated from measured noise) | two runs share 40% of the top 10; `--votes 2` raises that to 52%; each card shows its own shortlist survival rate |
+| Coverage and slate shape | 20 promos from 17 of the 50 episodes, 5 of them joining two episodes; 11 / 7 / 2 from the opening / middle / late, so the whole top 10 comes from the opening |
+| A first-time viewer (a model) follows the clip | 3.8 / 5 on the 20 promos, 14 of them rated 4 or 5 (3.65 / 5 over all 40 shortlisted clips) |
+| Editor's checks | 8 of the 20 pass all nine (5 of the top 10); the rest are ranked lower, and each failed check is shown on the promo |
+| Promise & payoff | the show answers 19 of 20 promos' questions (11 later in the same episode, 8 in a later one); the 20th could not be verified, because the AI named an earlier episode |
+| Consistency | on Kuku's show, simulated from the model's measured noise: two runs share 40% of the top 10, 52% with `--votes 2`. On 4 public dramas, two real uncached runs shared 68% of the top-10 candidates and gave 88% of lines the same hook score |
 | Stage directions | with "cliffhanger" / "cut to black" hidden, it finds the writers' cliffhanger as often (76% vs 74%) |
 | Editor's checks, controlled test | a blind judge from another model family, on matched clips, follows clips that pass better: stops before the payoff 5.0 vs 4.8, no backstory 4.6 vs 4.2. The "≤3 speakers" check is not confirmed (3.6 vs 3.8). 5+5 clips each, so this is a small test. |
 | **Honest negatives** | see below |
 
-**External benchmark** (`scripts/benchmark_dramaad.py`). Two unseen Chinese dramas, 20 episodes each, scored against the ads their professional editors cut.
-- **Robustness:** the tool runs end to end on a new language and format.
-- **Agreement:** the slate's seconds appear in those ads 1.4× as often as an average second. Random clips manage 1.2×, but simply taking the opening of every episode manages 1.7×.
-- **Within an episode,** its choice of seconds does not beat chance.
-- **The two dramas disagree:** one scores 2.0×, the other 0.75×.
+**External benchmark** (`scripts/benchmark_dramaad.py`). 12 unseen Chinese dramas, 20 episodes each, scored against the ads their professional editors cut (11 have ads in those episodes; means over dramas with bootstrap 95% CIs).
+- **Robustness:** the tool runs end to end on a new language and format; 418 calls to NVIDIA's free API, none failed.
+- **Agreement:** over the top 20, the editors' ads use the slate's seconds 1.39× as often as an average second, against 1.08× for random clips (difference +0.31, CI +0.01 to +0.63).
+- **Within an episode,** the best-scored clips beat random spots in the same episode by a small margin (+0.04, CI 0.00 to 0.09; 8 of 11 dramas up). The earlier 2-drama result (0.91 vs 1.06) was too small a sample.
+- **Where it loses:** simply taking each episode's opening still matches the editors better in the top 10 (1.74× against 1.44×).
 
-Those editors mostly reuse episode openings inside about 3-minute ads, which is a different product from 20–60 s hook-to-cliffhanger promos. Two dramas are too few to tune on; calibrating on all 28 is the next step.
+Those editors mostly reuse episode openings inside about 3-minute ads, which is a different product from 20–60 s hook-to-cliffhanger promos, so this is a check, not a target to tune on.
 
 **Blind A/B against the first version** (both clip orders):
 - **Judge from another family (Llama-3.1-8B):** it preferred the first version's top 10, 4 to 1, with 5 ties.
@@ -126,6 +132,21 @@ uv run promo-finder check --model <provider/model>        # one tiny call proves
 uv run promo-finder run <show> --model <provider/model> --fast            # measured on NVIDIA's free API: 20 episodes in 2.4 min
 uv run promo-finder run <show> --model <provider/model> --fast --votes 2  # steadier ranking, 2x the calls
 ```
+
+## Learning from how posted promos perform (`promo-finder learn`)
+
+The four weights are hand-set priors. Once promos are posted, their results should set them:
+
+```bash
+uv run promo-finder learn <run> --outcomes posted.csv            # refit the weights; writes learned.yaml, never touches config.yaml
+uv run promo-finder learn <run> --outcomes posted.csv --plan 5   # also: which 5 promos to post next
+uv run promo-finder run <next-show> --config learned.yaml        # rank the next show with the learned weights
+```
+
+- **Input:** one row per posted (or reviewed) promo: its id from `promos.csv` and a result, either a rate (hook rate, hold rate, tap-through) or the editor's approve/reject as 1/0.
+- **The fit:** the current weights count as 30 posts' worth of evidence (`--prior-strength`), so a handful of posts cannot swing them. Weights stay non-negative and sum to 1, each comes with an uncertainty, and fewer than 30 posts gets a warning.
+- **The posting plan** (`--plan K`) uses Thompson sampling: it draws plausible weights from the fit, re-ranks the candidates under each draw, and posts what wins most often. Clips the data are unsure about still get a turn, so the next posts teach it the most. This is a contextual bandit rather than full reinforcement learning, because each post is a one-step decision with an immediate result.
+- **Tested on simulated outcomes only** (`tests/test_learn.py`): it recovers known weights from 500 posts (median worst error 0.026), and 3 posts never move a weight by more than 0.07. It has not seen real posts yet.
 
 | Provider | `--model` | Key |
 |---|---|---|
@@ -203,4 +224,4 @@ uv run promo-finder ab <old_run> <new_run> --model …       # blind A/B, both o
 - Script timing is assumed to match the final cut. Every clip is rendered by `cut_promos.sh` for a human check.
 - The real proof is hook rate and hold rate on posted promos. The approve/reject log is there to refit the weights on them.
 
-More in [`docs/research.md`](docs/research.md), [`docs/assumptions.md`](docs/assumptions.md) and [`docs/ai_log.md`](docs/ai_log.md).
+More in [`docs/research.md`](docs/research.md) and [`docs/assumptions.md`](docs/assumptions.md).

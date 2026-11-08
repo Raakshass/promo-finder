@@ -126,9 +126,6 @@ def main() -> None:
     rep = m.get("answer_repairs") or {}
     if rep.get("flat_answers"):
         fails.append(f"The free model came back flat on {rep['flat_answers']} of {m['episodes']} episodes ({rep.get('flat_fixed_on_retry', 0)} fixed by re-asking).")
-    if bench:
-        s2 = bench["summary"]
-        fails.append(f"On unseen dramas, its choice of seconds within an episode does not beat chance ({s2['ours_within_lift']:.2f} vs {s2['random_within_lift']:.2f}), and the two dramas disagree.")
     fails.append("It reads text only and assumes script timing equals the final cut (`cut_promos.sh` renders each clip for a check).")
     vals["FAILURES"] = " ".join(fails)
     who = lambda line: " ".join(w[:1].upper() + w[1:].lower() for w in (line["speaker"] or "Action").split())  # noqa: E731
