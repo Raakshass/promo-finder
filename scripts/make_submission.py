@@ -40,7 +40,10 @@ def main() -> None:
     (out / "README.txt").write_text("\n".join(lines + ["", "Start with official__*/promos.md (ranked promos), official__*/promos_by_episode.csv (one pick per episode),",
                                                       "official__*/eval/promoability.md (which episodes are easy/hard to promo) and official__*/eval/failures.md (where it picks badly).",
                                                       "official__*/eval/ab_vs_previous.json is the blind A/B against previous_version__*; cut_promos.sh renders every clip with ffmpeg.",
-                                                      "llm_raw/ holds every raw model response; beats/ holds every beat's scores; eval/metrics.json holds the numbers in the doc."]))
+                                                      "llm_raw/ holds every raw model response; beats/ holds every beat's scores; eval/metrics.json holds the numbers in the doc.",
+                                                      "How the ranking weights were tested: official__*/eval/weight_sensitivity.md (small changes to the weights),",
+                                                      "eval/weights_vs_editors.md (do professional editors' picks contradict them?) and eval/external_benchmark_12_dramas.md",
+                                                      "(12 public dramas scored against professional ads)."]))
     (SUB / "RUNS.txt").write_text("\n".join(f"{k}={v}" for k, v in runs.items() if v))
     zpath = SUB / "outputs.zip"
     with zipfile.ZipFile(zpath, "w", zipfile.ZIP_DEFLATED) as z:

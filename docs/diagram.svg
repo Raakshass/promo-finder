@@ -71,5 +71,5 @@
   </g>
 
   <text x="515" y="24" text-anchor="middle" font-size="13.5" fill="#334155">The AI never writes a timestamp: it scores lines by id, and every cut comes from the script's own timing.</text>
-  <text x="515" y="313" text-anchor="middle" font-size="11.5" fill="#64748b">No API key? A keyword-based twin runs the same pipeline instantly.</text>
+  <text x="515" y="313" text-anchor="middle" font-size="11.5" fill="#64748b">No API key? Keyword rules run the same pipeline instantly.</text>
 </svg>

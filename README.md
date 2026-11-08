@@ -26,7 +26,7 @@ flowchart LR
     class E human
 ```
 
-Purple steps are the AI and blue steps are code. **The AI never writes a timestamp.** It scores lines by id; every cut, rule and ranking is deterministic code, and the weights live in [`config.yaml`](config.yaml). With no API key, a keyword-based twin runs the same pipeline instantly.
+Purple steps are the AI and blue steps are code. **The AI never writes a timestamp.** It scores lines by id; every cut, rule and ranking is deterministic code, and the weights live in [`config.yaml`](config.yaml). With no API key, keyword rules stand in for the AI and run the same pipeline instantly.
 
 ## How the ranking works (all of it is plain arithmetic in code)
 
@@ -118,7 +118,7 @@ The trade-off is real. The new slate posts early-episode clips, the way professi
 ```bash
 uv sync                                        # Python 3.11+
 uv run promo-finder parse <show-folder>        # 1-second sanity check of the input
-uv run promo-finder run <show-folder> --model none     # no key: the keyword twin, instant
+uv run promo-finder run <show-folder> --model none     # no key: keyword rules instead of the AI, instant
 uv run promo-finder run <show-folder> --model openrouter/nvidia/nemotron-3.5-super-vl:free --batch 5 --reasoning-off   # free open model
 uv run streamlit run app/streamlit_app.py      # the app
 ```
@@ -176,7 +176,7 @@ They're the offline option, not the interview one.
 2. Add these secrets:
    - `OUTPUTS_URL`: a private link to the outputs zip. The app opens on the official results with no model call.
    - `NVIDIA_API_KEY`: recommended. A free key from build.nvidia.com, no card needed. Visitors can then re-run on a new show with **the same open-weights model as the official run**: no daily cap, about 40 requests a minute shared by all visitors.
-   - `OPENROUTER_API_KEY` (and `…_KEY2/3`): optional fallback. OpenRouter's free tier allows about 50 calls a day per key, so runs there cover the first 15 episodes. When the day's quota is used up, the run stops and says so; it never passes keyword-twin results off as model results.
+   - `OPENROUTER_API_KEY` (and `…_KEY2/3`): optional fallback. OpenRouter's free tier allows about 50 calls a day per key, so runs there cover the first 15 episodes. When the day's quota is used up, the run stops and says so; it never passes keyword-rule results off as model results.
 3. A visitor can also paste their own key or endpoint, or run with no key at all.
 
 **Why not Hugging Face?**

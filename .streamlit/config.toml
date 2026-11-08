@@ -1,10 +1,33 @@
 [theme]
 base = "light"
-primaryColor = "#ff3b5c"
+primaryColor = "#18181b"
 backgroundColor = "#ffffff"
 secondaryBackgroundColor = "#f6f6f8"
 textColor = "#111118"
-font = "sans serif"
+borderColor = "#e5e7eb"
+dataframeHeaderBackgroundColor = "#f6f6f8"
+linkColor = "#1d4ed8"
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+baseFontSize = 15
+headingFontSizes = ["1.5rem", "1.4rem", "1.15rem", "1rem", "0.9rem", "0.85rem"]
+metricValueFontSize = "1.5rem"
+baseRadius = "8px"
+buttonRadius = "8px"
+greenTextColor = "#15803d"
+greenBackgroundColor = "#f0fdf4"
+orangeTextColor = "#92400e"
+orangeBackgroundColor = "#fef3c7"
+grayTextColor = "#475569"
+grayBackgroundColor = "#f1f5f9"
+violetTextColor = "#6d28d9"
+violetBackgroundColor = "#f5f3ff"
+blueTextColor = "#1d4ed8"
+blueBackgroundColor = "#eff6ff"
+redTextColor = "#b91c1c"
+redBackgroundColor = "#fef2f2"
+
+[client]
+toolbarMode = "minimal"
 
 [server]
 headless = true
